@@ -26,22 +26,27 @@ class Server(ImageNetworker):
             if self.recv_noise:
                 self.noise_image = self.recv_image(conn)
                 
-        denoised_image = self.noise_image
+        self.denoised_image = self.noise_image
         if self.use_denoising:
-            denoised_image = self.denoise(denoised_image)
-            
-        diff = (np.abs(self.image - denoised_image) < 30).mean()
-        self.log('Percentage of unaffected pixels:', diff)
-        diff = np.abs(self.image - denoised_image).astype('float32').mean()
-        self.log('Mean absolute difference:', diff)
-        diff = np.square((self.image - denoised_image).astype('float32')).mean()
-        self.log('Square difference:', diff)
-        self.denoised_image = denoised_image
+            self.denoised_image = self.denoise(self.noise_image)
+
+        self.log('Testing on denoised image')
+        self.perform_test(self.denoised_image)
+        self.log('Testing on noise image')
+        self.perform_test(self.noise_image)
     
+    def perform_test(self, noise_image):
+        diff = (np.abs(self.image - noise_image) < 20).mean()
+        self.log('Percentage of unaffected pixels:', diff)
+        diff = np.abs(self.image - noise_image).astype('float32').mean()
+        self.log('Mean absolute difference:', diff)
+        diff = np.square((self.image - noise_image).astype('float32')).mean()
+        self.log('Square difference:', diff)
+
     def denoise(self, im):
         return cv2.medianBlur(im, ksize=5)
 
 
 if __name__ == '__main__':
-    server = Server(server_port=65000, recv_noise=False, use_denoising=False)
+    server = Server(server_port=65001, recv_noise=True, use_denoising=True)
     server.start()
