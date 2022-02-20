@@ -5,6 +5,9 @@ import numpy as np
 from image_networker import ImageNetworker, HOST
 
 
+HOST = 'lab1_server'
+
+
 class Server(ImageNetworker):
     def __init__(self, server_port, block_size=1024, recv_noise=True, use_denoising=True):
         super().__init__(block_size, 'Server')
