@@ -3,6 +3,7 @@ import cv2
 
 from image_networker import ImageNetworker, HOST
 
+HOST = 'lab1_noise_server'
 
 class Client(ImageNetworker):
     def __init__(self, server_port, image, block_size=1024):

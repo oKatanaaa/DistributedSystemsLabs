@@ -5,14 +5,15 @@ from random import random
 
 from image_networker import ImageNetworker, HOST
 
-
+NOISE_HOST = 'lab1_noise_server'
+CLEAN_HOST = 'lab1_server'
 
 class NoiseServer(ImageNetworker):
     def __init__(self, fake_server_port, real_server_port, block_size=1024):
         super().__init__(block_size, 'NoiseServer')
         # Receives image from the client
         self.recv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.recv_socket.bind((HOST, fake_server_port))
+        self.recv_socket.bind((NOISE_HOST, fake_server_port))
         self.recv_socket.listen()
         self.fake_server_port = fake_server_port
         
@@ -29,7 +30,7 @@ class NoiseServer(ImageNetworker):
         
         noise_image = self.add_noise(image)
         with self.send_socket as s:
-            s.connect((HOST, self.real_server_port))
+            s.connect((CLEAN_HOST, self.real_server_port))
             self.send_image(image, s)
             self.send_image(noise_image, s)
         

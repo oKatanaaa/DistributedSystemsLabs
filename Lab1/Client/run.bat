@@ -1,1 +1,1 @@
-docker run --network=host --rm --name lab1_client lab1_client
+docker run --rm --network=ds_lab1 --name lab1_client lab1_client

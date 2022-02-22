@@ -59,14 +59,15 @@ class ImageNetworker(Process):
         n_iters = n_bytes // self.block_size
         n_remains = n_bytes - n_iters * self.block_size
         im_bytes = []
-        for i in range(n_iters):
+        n_received = 0
+        while True:
             block = conn.recv(self.block_size)
             im_bytes.append(block)
-        
-        if n_remains > 0:
-            block = conn.recv(n_remains)
-            im_bytes.append(block)
+            n_received += len(block)
             
+            if n_received == n_bytes:
+                break
+  
         im_bytes = b''.join(im_bytes)
         image = np.frombuffer(im_bytes, dtype='uint8')
         image = image.reshape(h, w, 3)
